@@ -1,0 +1,21 @@
+{
+  "name": "cs-helsinki-phonebook-backend",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "vite"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pawelzysk1989/cs-helsinki-phonebook-backend.git"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.11.6",
+    "vite": "^2.6.13",
+    "vite-plugin-node": "^0.0.14"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
