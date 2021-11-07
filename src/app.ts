@@ -49,11 +49,7 @@ app.get("/api/persons/:id", (request, response) => {
   }
 });
 
-const generateId = () => {
-  const maxId =
-    persons.length > 0 ? Math.max(...persons.map((person) => person.id)) : 0;
-  return maxId + 1;
-};
+const generateId = () => Math.floor(Math.random() * 1000000);
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
@@ -62,6 +58,12 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({
       error: "name or number is missing",
     });
+  }
+
+  const isNameUnique = !persons.find((person) => person.name === body.name);
+
+  if (!isNameUnique) {
+    return response.status(400).json({ error: "name must be unique" });
   }
 
   const person = {
