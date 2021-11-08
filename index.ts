@@ -1,4 +1,5 @@
 import express from "express";
+import { IncomingMessage } from "http";
 import morgan from "morgan";
 
 let persons = [
@@ -27,10 +28,17 @@ let persons = [
 const app = express();
 app.use(express.json());
 
-morgan.token("body", (req, res) => JSON.stringify(req["body"]));
+morgan.token(
+  "body",
+  (req: IncomingMessage & { body: object | undefined }, _res) =>
+    JSON.stringify(req.body)
+);
 
 app.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms :body")
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :body",
+    { skip: (_req, _res) => process.env.NODE_ENV === "production" }
+  )
 );
 
 app.get("/api/persons", (req, res) => {
