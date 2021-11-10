@@ -1,7 +1,6 @@
 import express from "express";
-
-const app = express();
-app.use(express.json());
+import { IncomingMessage } from "http";
+import morgan from "morgan";
 
 let persons = [
   {
@@ -26,6 +25,22 @@ let persons = [
   },
 ];
 
+const app = express();
+app.use(express.json());
+
+morgan.token(
+  "body",
+  (req: IncomingMessage & { body: object | undefined }, _res) =>
+    JSON.stringify(req.body)
+);
+
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :body",
+    { skip: (_req, _res) => process.env.NODE_ENV === "production" }
+  )
+);
+
 app.get("/api/persons", (req, res) => {
   res.json(persons);
 });
@@ -49,11 +64,7 @@ app.get("/api/persons/:id", (request, response) => {
   }
 });
 
-const generateId = () => {
-  const maxId =
-    persons.length > 0 ? Math.max(...persons.map((person) => person.id)) : 0;
-  return maxId + 1;
-};
+const generateId = () => Math.floor(Math.random() * 1000000);
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
@@ -62,6 +73,12 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({
       error: "name or number is missing",
     });
+  }
+
+  const isNameUnique = !persons.find((person) => person.name === body.name);
+
+  if (!isNameUnique) {
+    return response.status(400).json({ error: "name must be unique" });
   }
 
   const person = {
