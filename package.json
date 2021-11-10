@@ -11,7 +11,7 @@
     "build": "npm run clean && npm run build:server && npm run build:ui",
     "clean": "rm -rf dist index.js",
     "deploy": "git push heroku main",
-    "deploy:full": "npx heroku create && npm run build && git add . && git commit -m uibuild && npm run deploy && npm run clean",
+    "deploy:full": "npx heroku create && npm run build && git add . && git commit -m uibuild && git push && npm run deploy && npm run clean",
     "logs:prod": "heroku logs --tail"
   },
   "repository": {
