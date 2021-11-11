@@ -10,8 +10,8 @@ POST http://localhost:3001/api/persons
 content-type: application/json
 
 {
-    "name": "Paweł Zyśk",
-    "number": "530 428 055"
+    "name": "Paweł Elo",
+    "number": "435 735 213"
 }
 
 ###
