@@ -2,7 +2,7 @@ GET http://localhost:3001/api/persons
 
 ###
 
-GET http://localhost:3001/api/persons/4
+GET http://localhost:3001/api/persons/618d9a4d2a4605cd5972c2fd
 
 ###
 
@@ -10,10 +10,10 @@ POST http://localhost:3001/api/persons
 content-type: application/json
 
 {
-    "name": "marik",
-    "number": "1234"
+    "name": "Paweł Zyśk",
+    "number": "530 428 055"
 }
 
 ###
 
-DELETE  http://localhost:3001/api/persons/5
+DELETE  http://localhost:3001/api/persons/618d970ee4dca774e1e86a35
