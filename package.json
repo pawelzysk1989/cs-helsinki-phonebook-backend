@@ -3,10 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "node index.js",
     "dev": "nodemon index.ts",
     "prod": "node index.js",
-    "build": "tsc"
+    "build:server": "tsc",
+    "build:ui": "cd ../fullstack-cs-helsinki/part2/phonebook && npm run build --prod && cp -r dist ../../../cs-helsinki-phonebook-backend",
+    "build": "npm run clean && npm run build:server && npm run build:ui",
+    "clean": "rm -rf dist index.js",
+    "deploy": "git push heroku main && npm run clean",
+    "deploy:full": "npm run build && git add . && git commit -m uibuild && npm run deploy",
+    "logs:prod": "heroku logs --tail"
   },
   "repository": {
     "type": "git",
