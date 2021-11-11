@@ -8,13 +8,12 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.ts",
-    "prod": "node index.js",
     "build:server": "rm -rf index.js && tsc",
     "build:ui": "rm -rf dist && cd ../fullstack-cs-helsinki/part2/phonebook && npm run build --prod && cp -r dist ../../../cs-helsinki-phonebook-backend",
     "clean": "rm -rf dist index.js",
     "deploy": "git push heroku main",
     "deploy:full": "npm run build:server && npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
-    "logs:prod": "heroku logs --tail"
+    "logs:prod": "npx heroku logs --tail"
   },
   "repository": {
     "type": "git",
