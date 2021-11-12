@@ -1,10 +1,11 @@
 require("dotenv").config();
 
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { IncomingMessage } from "http";
 import morgan from "morgan";
 
 import PersonModel from "./models/person";
+import { isPerson, validate as validatePerson } from "./types/Person";
 
 const app = express();
 app.use(express.json());
@@ -21,48 +22,97 @@ app.use(
 
 app.use(express.static("dist"));
 
-app.get("/api/persons", (req, res) => {
-  PersonModel.find({}).then((persons) => res.json(persons));
+app.get("/api/persons", (req, res, next) => {
+  PersonModel.find({})
+    .then((persons) => res.json(persons))
+    .catch((err) => next(err));
 });
 
-app.get("/info", (req, res) => {
-  PersonModel.count({}).then((len) => {
-    res.send(`
-      <p>Phonebook has info for ${len} people</p><p>${new Date()}</p>`);
-  });
+app.get("/info", (_req, res, next) => {
+  PersonModel.count({})
+    .then((len) => {
+      res.send(`
+        <p>Phonebook has info for ${len} people</p><p>${new Date()}</p>`);
+    })
+    .catch((err) => next(err));
 });
 
-app.get("/api/persons/:id", (request, response) => {
-  const id: string = request.params.id;
-
-  PersonModel.findById(id).then((person) => {
-    response.json(person);
-  });
-
-  // response.statusMessage = `Person with id=${id} not found`;
-  // response.status(404).end();
+app.get("/api/persons/:id", (request, response, next) => {
+  PersonModel.findById(request.params.id)
+    .then((person) => {
+      response.json(person);
+    })
+    .catch((err) => next(err));
 });
 
-const generateId = () => Math.floor(Math.random() * 1000000);
-
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
-  if (!body.name || !body.number) {
+  if (!isPerson(body)) {
     return response.status(400).json({
       error: "name or number is missing",
     });
   }
 
-  PersonModel.create(body).then((person) => response.json(person));
+  const personValidationError = validatePerson(body);
+
+  if (personValidationError) {
+    return response.status(400).json({
+      error: personValidationError,
+    });
+  }
+
+  PersonModel.create(body)
+    .then((person) => response.json(person))
+    .catch((err) => next(err));
 });
 
-app.delete("/api/persons/:id", (request, response) => {
-  console.log(request.params.id);
-  PersonModel.findByIdAndDelete(request.params.id).then((_) => {
-    response.status(204).end();
-  });
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+  const id = request.params.id;
+
+  if (!isPerson(body)) {
+    return response.status(400).json({
+      error: "name or number is missing",
+    });
+  }
+
+  const personValidationError = validatePerson(body);
+
+  if (personValidationError) {
+    return response.status(400).json({
+      error: personValidationError,
+    });
+  }
+  PersonModel.findByIdAndUpdate(id, body, { new: true })
+    .then((person) => response.json(person))
+    .catch((err) => next(err));
 });
+
+app.delete("/api/persons/:id", (request, response, next) => {
+  PersonModel.findByIdAndDelete(request.params.id)
+    .then((_) => {
+      response.status(204).end();
+    })
+    .catch((err) => next(err));
+});
+
+const errorMiddleware = (
+  error: Error,
+  _req: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorMiddleware);
 
 const PORT = process.env.PORT ?? 3001;
 app.listen(PORT, () => {

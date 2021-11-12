@@ -2,7 +2,7 @@ GET http://localhost:3001/api/persons
 
 ###
 
-GET http://localhost:3001/api/persons/618d9a4d2a4605cd5972c2fd
+GET http://localhost:3001/api/persons/618d47f09f611e732c67d8ed
 
 ###
 
@@ -10,10 +10,20 @@ POST http://localhost:3001/api/persons
 content-type: application/json
 
 {
-    "name": "Paweł Elo",
-    "number": "435 735 213"
+    "name": "marik",
+    "number": "1234"
 }
 
 ###
 
-DELETE  http://localhost:3001/api/persons/618d970ee4dca774e1e86a35
+PUT http://localhost:3001/api/persons/618e34f0c2aa80b87dd8add0
+content-type: application/json
+
+{
+    "name": "marik",
+    "number": "12345"
+}
+
+###
+
+DELETE  http://localhost:3001/api/persons/618e30047f3448a21a18db07
