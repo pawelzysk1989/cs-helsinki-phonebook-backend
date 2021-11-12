@@ -20,10 +20,21 @@ const personSchema = new mongoose.Schema<Person>({
     type: String,
     required: true,
     unique: true,
+    minlength: 3,
   },
   number: {
     type: String,
     required: true,
+    validate: {
+      validator: (value: string) => {
+        const numberOfDigits = (value.match(/\d+/g) ?? []).reduce(
+          (sum, curr) => sum + curr
+        ).length;
+        return numberOfDigits >= 8;
+      },
+      message: (props) =>
+        `Phone number must have at least 8 digits. Value sent: ${props.value}`,
+    },
   },
 });
 
