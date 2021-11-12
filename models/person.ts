@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import uniqueValidator from "mongoose-unique-validator";
 
 import { Person } from "../types/Person";
 
@@ -15,8 +16,15 @@ mongoose
   });
 
 const personSchema = new mongoose.Schema<Person>({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  number: {
+    type: String,
+    required: true,
+  },
 });
 
 personSchema.set("toJSON", {
@@ -26,5 +34,7 @@ personSchema.set("toJSON", {
     delete returnedObject.__v;
   },
 });
+
+personSchema.plugin(uniqueValidator);
 
 export default mongoose.model("Person", personSchema);

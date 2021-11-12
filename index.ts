@@ -5,7 +5,6 @@ import { IncomingMessage } from "http";
 import morgan from "morgan";
 
 import PersonModel from "./models/person";
-import { isPerson, validate as validatePerson } from "./types/Person";
 
 const app = express();
 app.use(express.json());
@@ -48,20 +47,6 @@ app.get("/api/persons/:id", (request, response, next) => {
 app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
-  if (!isPerson(body)) {
-    return response.status(400).json({
-      error: "name or number is missing",
-    });
-  }
-
-  const personValidationError = validatePerson(body);
-
-  if (personValidationError) {
-    return response.status(400).json({
-      error: personValidationError,
-    });
-  }
-
   PersonModel.create(body)
     .then((person) => response.json(person))
     .catch((err) => next(err));
@@ -71,20 +56,10 @@ app.put("/api/persons/:id", (request, response, next) => {
   const body = request.body;
   const id = request.params.id;
 
-  if (!isPerson(body)) {
-    return response.status(400).json({
-      error: "name or number is missing",
-    });
-  }
-
-  const personValidationError = validatePerson(body);
-
-  if (personValidationError) {
-    return response.status(400).json({
-      error: personValidationError,
-    });
-  }
-  PersonModel.findByIdAndUpdate(id, body, { new: true })
+  PersonModel.findByIdAndUpdate(id, body, {
+    new: true,
+    runValidators: true
+  })
     .then((person) => response.json(person))
     .catch((err) => next(err));
 });
@@ -107,6 +82,8 @@ const errorMiddleware = (
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
