@@ -9,7 +9,10 @@
     "clean": "rm -rf dist index.js",
     "deploy": "git push heroku main",
     "deploy:full": "npm run build:server && npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
-    "logs:prod": "npx heroku logs --tail"
+    "logs:prod": "npx heroku logs --tail",
+    "lint:fix": "eslint --ext .ts --quiet --fix --ignore-path ./.gitignore",
+    "lint:format": "prettier  --loglevel warn --write \"./**/*.{jsx,ts,tsx,css,md}\" ",
+    "lint": "npm run lint:format && npm run lint:fix "
   },
   "repository": {
     "type": "git",
@@ -21,7 +24,13 @@
     "@types/mongoose-unique-validator": "^1.0.5",
     "@types/morgan": "^1.9.3",
     "@types/node": "^16.11.7",
+    "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
     "nodemon": "^2.0.14",
+    "prettier": "^2.4.1",
     "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
   },

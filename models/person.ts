@@ -1,18 +1,18 @@
-import mongoose from "mongoose";
-import uniqueValidator from "mongoose-unique-validator";
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
-import { Person } from "../types/Person";
+import { Person } from '../types/Person';
 
-const url = process.env.MONGODB_URI ?? "";
+const url = process.env.MONGODB_URI ?? '';
 
-console.log("connecting to", url);
+console.log('connecting to', url);
 mongoose
   .connect(url)
   .then((_) => {
-    console.log("connected to MongoDB");
+    console.log('connected to MongoDB');
   })
   .catch((error) => {
-    console.log("error connecting to MongoDB:", error.message);
+    console.log('error connecting to MongoDB:', error.message);
   });
 
 const personSchema = new mongoose.Schema<Person>({
@@ -28,7 +28,7 @@ const personSchema = new mongoose.Schema<Person>({
     validate: {
       validator: (value: string) => {
         const numberOfDigits = (value.match(/\d+/g) ?? []).reduce(
-          (sum, curr) => sum + curr
+          (sum, curr) => sum + curr,
         ).length;
         return numberOfDigits >= 8;
       },
@@ -38,7 +38,7 @@ const personSchema = new mongoose.Schema<Person>({
   },
 });
 
-personSchema.set("toJSON", {
+personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
@@ -48,4 +48,4 @@ personSchema.set("toJSON", {
 
 personSchema.plugin(uniqueValidator);
 
-export default mongoose.model("Person", personSchema);
+export default mongoose.model('Person', personSchema);

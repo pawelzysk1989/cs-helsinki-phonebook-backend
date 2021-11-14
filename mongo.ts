@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, connect, connection, Model } from "mongoose";
+import mongoose, { Schema, model, connect, connection, Model } from 'mongoose';
 
 interface Person {
   name: string;
@@ -6,9 +6,7 @@ interface Person {
 }
 
 if (process.argv.length < 3) {
-  console.log(
-    "Please provide the password as an argument: node mongo.js <password>"
-  );
+  console.log('Please provide the password as an argument: node mongo.js <password>');
   process.exit(1);
 }
 
@@ -26,7 +24,7 @@ const personSchema = new Schema<Person>({
   number: { type: String, required: true },
 });
 
-const PersonModel = model<Person>("Person", personSchema);
+const PersonModel = model<Person>('Person', personSchema);
 
 if (name && number) {
   const person = new PersonModel({
@@ -40,7 +38,7 @@ if (name && number) {
   });
 } else {
   PersonModel.find({}).then((people) => {
-    console.log("phonebook:");
+    console.log('phonebook:');
     people.forEach((pers) => {
       console.log(pers.name, pers.number);
     });
